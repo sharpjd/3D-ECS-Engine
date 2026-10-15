@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "configurePresets": [
+    {
+      "name": "MC",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/Program Files/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "MCDebug",
+      "configurePreset": "MC",
+      "configuration": "Debug"
+    },
+    {
+      "name": "MCRelease",
+      "configurePreset": "MC",
+      "configuration": "Release"
+    }
+  ]
+}

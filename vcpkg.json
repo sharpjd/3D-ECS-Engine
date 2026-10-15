@@ -1,0 +1,12 @@
+{
+  "dependencies": [
+    "bgfx",
+    "glfw3",
+    "glm",
+    "imgui",
+    "opengl",
+    "stb",
+    "vulkan",
+    "vulkan-memory-allocator"
+  ]
+}
