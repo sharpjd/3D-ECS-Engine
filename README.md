@@ -9,7 +9,7 @@ Logic lives in **systems**: classes with `start()`, `update()` and `onDestroy()`
 
 Example psuedocode:
 ```cpp
-//Compnent: Camera
+//Component: Camera
 struct Camera {
   float fov = 45.0f;
   vec3 cameraDirection;
