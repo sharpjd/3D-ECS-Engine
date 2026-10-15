@@ -7,5 +7,40 @@ Entities are generational handles. Each entity index carries a generation counte
 
 Logic lives in **systems**: classes with `start()`, `update()` and `onDestroy()` hooks. Systems like camera control and rendering are all implemented as systems that read plain-data components.
 
+Example psuedocode:
+```cpp
+//Compnent: Camera
+struct Camera {
+  float fov = 45.0f;
+  vec3 cameraDirection;
+  vec3 cameraPos;
+}
+
+//System: RenderSystem
+class RenderSystem : public ISystem{
+
+  void start() override {
+
+    Camera cameraComp{...};
+    EntityHandle handle = ecs.newEntity();
+    ecs.addComponent(handle, cameraComp);
+
+  }
+
+  void update() override {
+
+    Query q = ecs.query<Camera>();
+    for (auto [entityHandle, camera] : q) {
+      glm::mat4 projection;
+      projection = glm::perspective(camera.fov, camera.cameraDirection, ...);
+      glUseProgram(myShader);
+      ...
+    }
+
+  }
+
+}
+```
+
 ### Future Plans
 I am planning to turn this project into a Minecraft clone as it's something I'm familiar with and offers me with a sandbox-y environment to explore programming ideas such as more advanced lighting and shader effects. I aim to responsibly use AI mainly as a learning tool as game engines and graphics programming necessitate deep understanding of underlying systems and hardware.
