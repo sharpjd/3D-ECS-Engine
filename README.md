@@ -43,4 +43,4 @@ class RenderSystem : public ISystem{
 ```
 
 ### Future Plans
-I am planning to turn this project into a Minecraft clone as it's something I'm familiar with and offers me with a sandbox-y environment to explore programming ideas such as more advanced lighting and shader effects. I aim to responsibly use AI mainly as a learning tool as game engines and graphics programming necessitate deep understanding of underlying systems and hardware.
+I am planning to turn this project into a Minecraft clone as it's something I'm familiar with and offers me with a sandbox-y environment to explore programming ideas such as more advanced lighting and shader effects. I aim to responsibly use AI mainly as a learning tool as game engines and graphics programming necessitate independent thinking / innovation, and deep understanding of underlying systems and hardware.
