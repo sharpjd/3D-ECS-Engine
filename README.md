@@ -1,5 +1,5 @@
 ## Entity Component System
-This is an ECS game engine written in C++20 with no external ECS library. Components are stored in **sparse sets**, with one densely packed array per component type. Iteration is cache-friendly, and adding, removing or looking up a component is O(1). Component types are assigned IDs at compile time through templates. 
+This is an ECS game engine written in C++20 with no external ECS library. Components are stored in **sparse sets**, with one densely packed array per component type. Iteration is cache-friendly, and adding, removing or looking up a component is O(1). Component types are assigned IDs at compile time through templates.
 
 Queries are done using variadic templates and Iterators, for example `reg.query<Transform, Mesh>()`. They return an `Iterator` you can use in a range-based for-loop. A query iterates the *smallest* of the requested component pools and checks membership in the others, so its cost scales with the rarest component rather than the total entity count. When Entities/Components are "removed", deletion is deferred. Anything removed mid-frame is marked "dead", skipped by the iterator, and removed in a single `flush()` at the end of the frame. This makes it safe to destroy entities while iterating.
 
@@ -42,5 +42,7 @@ class RenderSystem : public ISystem{
 }
 ```
 
-### Future Plans
-I am planning to turn this project into a Minecraft clone as it's something I'm familiar with and offers me with a sandbox-y environment to explore programming ideas such as more advanced lighting and shader effects. I aim to responsibly use AI mainly as a learning tool as game engines and graphics programming necessitate independent thinking / innovation, and deep understanding of underlying systems and hardware.
+### Future Plans / Disclaimers
+I am planning to turn this project into a Minecraft clone as it's something I'm familiar with and offers me with a sandbox-y environment to explore programming ideas such as more advanced lighting and shader effects. I am currently sticking to OpenGL as it allows me to focus on concepts without the deep plumbing requirements of Vulkan.
+
+The ECS data structures / logic were written without any AI-generated code. I aim to responsibly use AI mainly as a learning tool as game engines and graphics programming necessitate independent thinking / deep understanding of underlying systems and hardware. 
