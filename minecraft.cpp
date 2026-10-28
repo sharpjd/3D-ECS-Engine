@@ -20,7 +20,7 @@
 #include <chrono>
 #include "sys/cameraSys.h"
 
-#include "demoCameraRenderingSys.h"
+#include "lightMapDemo.h"
 
 class Registry;
 
@@ -53,7 +53,7 @@ public:
 
 	Minecraft() 
 		: orch(reg),
-		ec(EngineContext{ reg, orch, input, shaderLoader, window, time }),
+		ec(EngineContext{ reg, orch, input, shaders, textures, window, time }),
 		window(&glfwWindow),
 		input(&glfwWindow)
 	{	
@@ -62,26 +62,33 @@ public:
 private:
 
 	GLFWwindow* glfwWindow;
+
 	VertexShaderLoader vertexShaderLoader;
 	FragShaderLoader fragShaderLoader;
+	ShaderManager shaders{ vertexShaderLoader, fragShaderLoader };
+
+	TextureLoader texLoader;
+	TextureManager textures{ texLoader };
 
 	Time time;
 	Window window;
 	Input input;
 	Registry reg;
 	Orchestrator orch;
-	ShaderFileLoader shaderLoader{ vertexShaderLoader, fragShaderLoader };
+
 	EngineContext ec;
 
 	void initEngine() {
 		window.init();
+
+		textures.loadAll(); //for now we just load all textures
 	}
 
 	void mainLoop() {
 
 		input.update();
-		window.update();
 		orch.update();
+		window.update();
 		time.update(); //comes last, gives deltatime
 
 		//std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -92,8 +99,8 @@ private:
 		std::shared_ptr<CameraSys> cam(new CameraSys(ec));
 		orch.addSystem(cam);
 
-		std::shared_ptr<ISystem> s8(new DemoCameraRenderingSys(ec));
-		orch.addSystem(s8);
+		std::shared_ptr<ISystem> s(new LightMapDemo(ec));
+		orch.addSystem(s);
 	}
 
 };

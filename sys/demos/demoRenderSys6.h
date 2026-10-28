@@ -22,7 +22,7 @@ private:
 	const char* fragShaderSource = nullptr;
 public:
 
-	Shader hello5Shader{ ShaderId::Hello5, ec.shaderLoader };
+	MCShader hello5Shader{ ShaderId::Hello5, ec.shaderLoader };
 
 	DemoRenderSys6(EngineContext& ec) : ISystem(ec)
 	{
@@ -150,18 +150,18 @@ public:
 		}
 		stbi_image_free(data2);
 
-		glUniform1i(glGetUniformLocation(hello5Shader.ID, "texture1"), 0);
-		glUniform1i(glGetUniformLocation(hello5Shader.ID, "texture2"), 1);
-		u1f_alpha = glGetUniformLocation(hello5Shader.ID, "alpha");
-		u4fv_model = glGetUniformLocation(hello5Shader.ID, "model");
-		u4fv_view = glGetUniformLocation(hello5Shader.ID, "view");
-		u4fv_projection = glGetUniformLocation(hello5Shader.ID, "projection");
+		glUniform1i(glGetUniformLocation(hello5Shader.gl_programID, "texture1"), 0);
+		glUniform1i(glGetUniformLocation(hello5Shader.gl_programID, "texture2"), 1);
+		u1f_alpha = glGetUniformLocation(hello5Shader.gl_programID, "alpha");
+		u4fv_model = glGetUniformLocation(hello5Shader.gl_programID, "model");
+		u4fv_view = glGetUniformLocation(hello5Shader.gl_programID, "view");
+		u4fv_projection = glGetUniformLocation(hello5Shader.gl_programID, "projection");
 
 		/*
 		* IMPORTANT
 		* Tell OpenGL which texture unit each uniform (sampler2d) corresponds to
 		*/
-		glUseProgram(hello5Shader.ID);
+		glUseProgram(hello5Shader.gl_programID);
 		
 		
 	}
@@ -205,7 +205,7 @@ public:
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(hello5Shader.ID);
+		glUseProgram(hello5Shader.gl_programID);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
