@@ -47,7 +47,10 @@ I am planning to turn this project into a Minecraft clone as it's something I'm 
 
 The ECS data structures / logic were written without any AI-generated code. I aim to responsibly use AI mainly as a learning tool as game engines and graphics programming necessitate independent thinking / deep understanding of underlying systems and hardware. 
 
-### Progress Update
-Oct. 27, 2026: Specular map and lighting. Numerous abstractions for Shaders, Textures, and Materials now exist. The squares, light, geometry, material, and camera are implemented as entities and components in the engine. <img width="800" height="600" alt="Minecraft_Lcila934Zf" src="https://github.com/user-attachments/assets/6daa5b76-1f85-4eea-a4b5-6c6786f82884" />
+### Progress Updates
+Oct. 30, 2026: Multi-light lighting and Uniform Array support. Added some CMake presets and preprocessor macros for convenience and benchmarking.
+<img width="800" height="600" alt="Minecraft_GCzau2A5TF" src="https://github.com/user-attachments/assets/9909a7b9-7012-4cee-99e0-ef9b76b9cc97" />
+
+Oct. 27, 2026: Specular map and lighting. Numerous abstractions for Shaders, Textures, and Materials now exist. The squares, light, geometry, material, and camera are implemented as entities and components in the engine.
 
 
