@@ -8,6 +8,17 @@
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "C:/Program Files/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "RELEASE_OPTIMIZATIONS_IN_DEBUG": "OFF"
+      }
+    },
+    {
+      "name": "MC_Release_Optimizations_In_Debug",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/Program Files/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "RELEASE_OPTIMIZATIONS_IN_DEBUG": "ON"
       }
     }
   ],
@@ -15,6 +26,11 @@
     {
       "name": "MCDebug",
       "configurePreset": "MC",
+      "configuration": "Debug"
+    },
+    {
+      "name": "MCDebug_Optimized",
+      "configurePreset": "MC_Release_Optimizations_In_Debug",
       "configuration": "Debug"
     },
     {

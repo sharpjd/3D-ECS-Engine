@@ -83,3 +83,33 @@ struct PhongLightMapShader : MCShader {
 
     PhongLightMapShader(ShaderManager& sm) : MCShader(ShaderId::PhongLightMap, sm) {}
 };
+
+struct MultiLightShader : MCShader {
+    //vert
+    Uniform<glm::mat4> model{ *this, "model" };
+    Uniform<glm::mat4> view{ *this, "view" };
+    Uniform<glm::mat4> projection{ *this, "projection" };
+
+    //frag
+    Uniform<glm::vec3> viewPos{ *this, "viewPos" };
+
+    Uniform<int> glTexUnit_materialDiffuse{ *this, "material.diffuse" };
+    Uniform<int> glTexUnit_materialSpecular{ *this, "material.specular" };
+    Uniform<float> materialShininess{ *this, "material.shininess" };
+
+    Uniform<glm::vec3> dirLightDirection{ *this, "dirLight.direction" };
+    Uniform<glm::vec3> dirLightAmbient{ *this, "dirLight.ambient" };
+    Uniform<glm::vec3> dirLightDiffuse{ *this, "dirLight.diffuse" };
+    Uniform<glm::vec3> dirLightSpecular{ *this, "dirLight.specular" };
+
+    int pointLightsSize = 4;
+    UniformArray<glm::vec3> pointLightPosition{ *this, "pointLights", pointLightsSize, ".position"};
+    UniformArray<float> pointLightConstant{ *this, "pointLights", pointLightsSize, ".constant" };
+    UniformArray<float> pointLightLinear{ *this, "pointLights", pointLightsSize, ".linear" };
+    UniformArray<float> pointLightQuadratic{ *this, "pointLights", pointLightsSize, ".quadratic" };
+    UniformArray<glm::vec3> pointLightAmbient{ *this, "pointLights", pointLightsSize, ".ambient" };
+    UniformArray<glm::vec3> pointLightDiffuse{ *this, "pointLights", pointLightsSize, ".diffuse" };
+    UniformArray<glm::vec3> pointLightSpecular{ *this, "pointLights", pointLightsSize, ".specular" };
+
+    MultiLightShader(ShaderManager& sm) : MCShader(ShaderId::MultiLightDemo, sm) {}
+};

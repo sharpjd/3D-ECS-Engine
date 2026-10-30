@@ -17,10 +17,6 @@ public:
 	}
 
 	std::string& get() {
-		//if (!loaded) {
-		//	str = File::load_file(filename);
-		//	loaded = true;
-		//}
 		if (!loaded) {
 			throw std::runtime_error("load the string file before reading it");
 		}
@@ -80,6 +76,7 @@ enum class ShaderId {
 	Light,
 	Phong,
 	PhongLightMap,
+	MultiLightDemo,
 };
 
 class VertexShaderLoader : public StringFileLoader<ShaderId> {
@@ -93,6 +90,7 @@ private:
 		{ShaderId::LightingDemo, LoadableStringFile("assets/shaders/lightingDemo.vert")},
 		{ShaderId::Phong, LoadableStringFile("assets/shaders/phongDemo.vert")},
 		{ShaderId::PhongLightMap, LoadableStringFile("assets/shaders/matLightDemo.vert")},
+		{ShaderId::MultiLightDemo, LoadableStringFile("assets/shaders/multiLightDemo.vert")},
 	};
 public:
 	std::unordered_map<ShaderId, LoadableStringFile>& getLoadables() override {
@@ -112,6 +110,7 @@ private:
 		{ShaderId::Light, LoadableStringFile("assets/shaders/light.frag")},
 		{ShaderId::Phong, LoadableStringFile("assets/shaders/phongDemo.frag")},
 		{ShaderId::PhongLightMap, LoadableStringFile("assets/shaders/matLightDemo.frag")},
+		{ShaderId::MultiLightDemo, LoadableStringFile("assets/shaders/multiLightDemo.frag")},
 	};
 public:
 	std::unordered_map<ShaderId, LoadableStringFile>& getLoadables() override {
