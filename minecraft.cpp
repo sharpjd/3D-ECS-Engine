@@ -10,17 +10,18 @@
 
 #include "orchestrator.h"
 
-#include "demoSys.h"
 #include "system.h"
 #include "window.h"
 #include "input.h"
 #include "time.h"
+#include "world.h"
 
 #include <thread>
 #include <chrono>
 #include "sys/cameraSys.h"
+#include "sys/chunkDrawer.h"
 
-#include "demoMultiLight.h"
+//#include "demoMesh.h"
 
 class Registry;
 
@@ -53,7 +54,7 @@ public:
 
 	Minecraft() 
 		: orch(reg),
-		ec(EngineContext{ reg, orch, input, shaders, textures, window, time }),
+		ec(EngineContext{ reg, orch, input, shaders, textures, models, window, time, world }),
 		window(&glfwWindow),
 		input(&glfwWindow)
 	{	
@@ -70,11 +71,16 @@ private:
 	TextureLoader texLoader;
 	TextureManager textures{ texLoader };
 
+	ModelLoader modelLoader;
+	ModelManager models{ modelLoader };
+
 	Time time;
 	Window window;
 	Input input;
 	Registry reg;
 	Orchestrator orch;
+
+	World world{3, 5, 3};
 
 	EngineContext ec;
 
@@ -140,8 +146,11 @@ private:
 		std::shared_ptr<CameraSys> cam(new CameraSys(ec));
 		orch.addSystem(cam);
 
-		std::shared_ptr<ISystem> s(new DemoMultiLight(ec));
-		orch.addSystem(s);
+		//std::shared_ptr<ISystem> s(new DemoMesh(ec));
+		//orch.addSystem(s);
+
+		std::shared_ptr<ChunkDrawer> s1(new ChunkDrawer(ec));
+		orch.addSystem(s1);
 	}
 
 };

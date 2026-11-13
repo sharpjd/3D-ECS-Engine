@@ -8,33 +8,45 @@
 
 class MCTexture {
 private:
-	GLuint gl_textureId; //for *generating the texture*
-	int gl_textureUnitId = -1; //for the *location of texture buffer units*
+	GLuint gl_textureId_; //for *the location of the generated texture*
+	int gl_textureUnitNumber = -1; //for the *shader location of texture buffer units*
 public:
 
 	TextureId texture;
 	TextureLoader& loader;
 
-	MCTexture(TextureId texture, TextureLoader& loader, int gl_textureUnitId) 
-		: texture(texture), loader(loader), gl_textureUnitId(gl_textureUnitId) 
+	MCTexture(TextureId texture, TextureLoader& loader, int gl_textureUnitNumber) 
+		: texture(texture), loader(loader), gl_textureUnitNumber(gl_textureUnitNumber) 
 	{
 		compile();
 	}
 
+	/// <summary>
+	/// Binds the texture and activates the shader texture slot assigned to this texture
+	/// </summary>
+	void use() {
+		glActiveTexture(gl_textureUnitNumber);
+		glBindTexture(GL_TEXTURE_2D, gl_textureId_);
+	}
+
+	int gl_textureId() {
+		return gl_textureId_;
+	}
+
 	int gl_texUnitIndex() const { //infer the texture index for use in a shader
-		return gl_textureUnitId - GL_TEXTURE0;
+		return gl_textureUnitNumber - GL_TEXTURE0;
 	}
 
 	void compile() {
 		auto& tLoader = loader.getLoadable(texture);
 
 		//probably passed in something like 0 or 1, pass GL_TEXTURE0 instead
-		assert(gl_textureUnitId >= GL_TEXTURE0);
+		assert(gl_textureUnitNumber >= GL_TEXTURE0);
 
-		glActiveTexture(gl_textureUnitId);
+		glActiveTexture(gl_textureUnitNumber);
 
-		glGenTextures(1, &gl_textureId);
-		glBindTexture(GL_TEXTURE_2D, gl_textureId);
+		glGenTextures(1, &gl_textureId_);
+		glBindTexture(GL_TEXTURE_2D, gl_textureId_);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

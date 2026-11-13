@@ -5,7 +5,35 @@
 #include <stdexcept>
 #include <assert.h>
 
-using sparse_index_type = uint32_t; //we have to place this before the template 
+using sparse_index_type = uint32_t; //we have to place this before the template
+
+using ComponentType = uint8_t;
+
+inline ComponentType nextComponentType = 0;
+
+struct ISparseCompStorage;
+
+using StorageFactory = ISparseCompStorage* (*)();
+
+/*
+* Indexed by component type. Filled during static initialization, one entry per component type
+* that is used anywhere in the program; Registry reads it on construction to create every storage
+* up front. Constant-initialized (all nullptr), so it is safe to write to from any static initializer.
+*/
+inline StorageFactory storageFactories[1 << (sizeof(ComponentType) * 8)] = {};
+
+//defined below, once SparseCompStorage is complete
+template<typename T>
+ComponentType assignComponentType();
+
+/*
+* Per-type component ID. Assigned once during static initialization (before main), so reading it
+* is a plain load with no thread-safe-static guard. IDs are consecutive but their order between
+* types is unspecified. Don't read it from the constructor of another global/static object, as it
+* may not have been assigned yet. Assigning the ID also registers the type's storage factory.
+*/
+template<typename T>
+inline const ComponentType componentType = assignComponentType<T>();
 
 template <typename T>
 class SparseSet;
@@ -53,6 +81,8 @@ public:
 	virtual int sparseSize() = 0;
 
 	virtual int denseSize() = 0;
+
+	virtual int componentTypeInt() = 0;
 };
 
 template<typename T>
@@ -72,9 +102,9 @@ public:
 		storage.remove(entityIndex, checkExists);
 	}
 
-	sparse_index_type add(T item) {
-		return storage.add(item);
-	}
+	//sparse_index_type add(T item) {
+	//	return storage.add(item);
+	//}
 
 	int denseToSparseIndex(int denseIndex) {
 		return storage.denseToSparseIndex(denseIndex);
@@ -95,9 +125,18 @@ public:
 	void resize(int size) {
 		storage.resize(size);
 	}
+
+	int componentTypeInt() {
+		return storage.componentTypeInt();
+	}
 };
 
-
+template<typename T>
+ComponentType assignComponentType() {
+	ComponentType type = nextComponentType++;
+	storageFactories[type] = []() -> ISparseCompStorage* { return new SparseCompStorage<T>(); };
+	return type;
+}
 
 template <typename T>
 class SparseSet {
@@ -112,7 +151,17 @@ private:
 	std::vector<int> sparse; //each index contains the actual index of the data in the dense vector (if any, otherwise -1)
 	std::vector<int> freeIndices;
 
+	int componentTypeInt_ = -1;
+
 public:
+
+	SparseSet() {
+		componentTypeInt_ = componentType<T>;
+	}
+
+	int componentTypeInt() {
+		return componentTypeInt_;
+	}
 
 	T& operator[](sparse_index_type sparseIndex) {
 		int denseIndex = sparse[sparseIndex];
@@ -185,32 +234,32 @@ public:
 		sparse[sparseIndex] = denseIndex;
 	}
 
-	/*
-	add the item and return the sparse index of the item just added
-	*/
-	sparse_index_type add(T item) {
+	///*
+	//add the item and return the sparse index of the item just added
+	//*/
+	//sparse_index_type add(T item) {
 
-		sparse_index_type sparseIndex;
-		if (freeIndices.size() > 0) { //recycle an indice that's unused
-			sparseIndex = freeIndices.back;
-			freeIndices.pop_back();
-		}
-		else { //no free indices, so expand the sparse vector
-			sparseIndex = sparse.size();
-			sparseIndex = sparse.push_back(-1);
-		}
+	//	sparse_index_type sparseIndex;
+	//	if (freeIndices.size() > 0) { //recycle an indice that's unused
+	//		sparseIndex = freeIndices.back();
+	//		freeIndices.pop_back();
+	//	}
+	//	else { //no free indices, so expand the sparse vector
+	//		sparseIndex = sparse.size();
+	//		sparse.push_back(-1);
+	//	}
 
-		sparse_index_type denseIndex = dense.size();
+	//	sparse_index_type denseIndex = dense.size();
 
-		dense.push_back({
-			std::move(item),
-			sparseIndex
-		});
+	//	dense.push_back({
+	//		std::move(item),
+	//		sparseIndex
+	//	});
 
-		sparse[sparseIndex] = denseIndex;
+	//	sparse[sparseIndex] = denseIndex;
 
-		return sparseIndex;
-	}
+	//	return sparseIndex;
+	//}
 
 	/*
 	Removes the item associated with the index from the dense vector and marks the index as unused 
@@ -225,7 +274,7 @@ public:
 		int denseIndex = sparse[index]; //to remove from the dense vector
 
 		if (assertExists) {
-			assert(denseIndex > 0);
+			assert(denseIndex >= 0);
 		}
 
 		if (denseIndex < 0) return; //skip if nothing is mapped to this sparse index

@@ -2,6 +2,7 @@
 
 #include "componentStorage.h"
 #include "registry.h"
+#include <array>
 
 
 template<typename... Components>
@@ -10,14 +11,15 @@ public:
 	Registry& reg;
 
 	ISparseCompStorage* smallestStorage = nullptr;
-	std::vector<ISparseCompStorage*> relevantStorages;
+	//sized at compile time so constructing a query never touches the heap
+	std::array<ISparseCompStorage*, sizeof...(Components)> relevantStorages;
 
 	Query(
 		Registry& reg
 	)
-		: reg(reg)
+		: reg(reg),
+		relevantStorages{ reg.getComponentStorage<Components>()... } //TODO getComponentStorage<T>() is still expensive
 	{
-		(relevantStorages.push_back(reg.getComponentStorage<Components>()), ...);
 		selectSmallestDense();
 	}
 
@@ -52,7 +54,7 @@ public:
 
 			return std::tuple<EntityHandle, Components&...> {
 				query->reg.getEntityHandle(entityIndex),
-					query->reg.getComponentStorageDirect<Components>()[entityIndex]...
+					(*query->reg.getComponentStorage<Components>())[entityIndex]...
 			};
 		}
 

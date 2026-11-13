@@ -10,17 +10,6 @@
 template <typename... Components>
 class Query;
 
-using ComponentType = uint8_t;
-
-inline ComponentType nextComponentType = 0;
-
-template<typename T>
-ComponentType getComponentType()
-{
-	static ComponentType type = nextComponentType++;
-	return type;
-}
-
 class Registry {
 public:
 
@@ -33,6 +22,12 @@ public:
 
 	Registry();
 
+	//the registry owns the raw storage pointers; copying would double-delete them
+	Registry(const Registry&) = delete;
+	Registry& operator=(const Registry&) = delete;
+
+	~Registry();
+
 	EntityHandle newEntity();
 
 	std::vector<bool> deadEntityMap;
@@ -44,9 +39,6 @@ public:
 
 	template <typename T>
 	void addComponent(EntityHandle handle, T component);
-
-	template <typename T>
-	SparseSet<T>& getComponentStorageDirect();
 
 	template <typename T>
 	SparseCompStorage<T>* getComponentStorage();
@@ -90,7 +82,7 @@ private:
 	void initialize();
 
 	//index of each comp type == comp type()
-	std::vector<std::unique_ptr<ISparseCompStorage>> componentStorages; 
+	std::vector<ISparseCompStorage*> componentStorages; 
 	//index is Entity ID/index, value is generation, negative value means the indice is inactive (the absolute value is the generation)
 	std::vector<int> entityList;
 	std::vector<int> inactiveIndices;

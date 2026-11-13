@@ -35,8 +35,9 @@ public:
 	bool firstMouse = false;
 	float lastX = 400, lastY = 300;
 
+	float cameraSpeed = 0.01f;
+
 	void update() override {
-		const float cameraSpeed = 2.5f * ec.time.deltaTime;
 
 		Query q = ec.reg.query<Camera>();
 		assert(q.count() == 1);
@@ -95,8 +96,16 @@ public:
 			cam.view = glm::lookAt(cam.cameraPos, cam.cameraPos + cameraFront, cameraUp);
 
 			float& fov = cam.fov;
-			float zoomSensitivity = 10000.0f;
-			fov -= (float)scrollCallbackYOffset * zoomSensitivity * ec.time.deltaTime;
+			//float zoomSensitivity = 10000.0f;
+			//fov -= (float)scrollCallbackYOffset * zoomSensitivity * ec.time.deltaTime;
+
+			float speedChangeSensitivity = 0.01f;
+			cameraSpeed += (float)scrollCallbackYOffset * speedChangeSensitivity;
+
+			if (cameraSpeed < 0.01f) {
+				cameraSpeed = 0.01f;
+			}
+
 			scrollCallbackYOffset = 0;
 			if (fov < 1.0f)
 				fov = 1.0f;

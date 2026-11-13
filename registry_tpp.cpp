@@ -5,7 +5,7 @@ void Registry::removeComponent(EntityHandle handle) {
 	componentDeletionQueue.push_back(
 		{
 			handle,
-			getComponentType<T>()
+			componentType<T>
 		}
 	);
 	ISparseCompStorage* storage = getComponentStorage<T>();
@@ -36,7 +36,7 @@ inline void Registry::addComponent(EntityHandle handle, T component) {
 		throw std::runtime_error(error);
 	}
 
-	auto& storage = getComponentStorageDirect<T>();
+	auto& storage = getComponentStorage<T>()->storage;
 	//make sure our storage is big enough to actually index
 	if (storage.size() <= handle.index) {
 		if (handle.index - storage.size() > STORAGE_EXPANSION_WARN_SIZE) {
@@ -45,7 +45,7 @@ inline void Registry::addComponent(EntityHandle handle, T component) {
 		storage.resize(handle.index + 1);
 	}
 
-	ComponentType type = getComponentType<T>();
+	ComponentType type = componentType<T>;
 	//make sure we are not overwriting a component
 	if (storage.isMapped(handle.index)) {
 		std::string error =
@@ -71,35 +71,10 @@ inline void Registry::addComponent(EntityHandle handle, T component) {
 }
 
 template<typename T>
-inline SparseSet<T>& Registry::getComponentStorageDirect()
-{
-	ComponentType type = getComponentType<T>();
-
-	//ensure the storage for this component type exists
-	if (!componentStorages[type])
-	{
-		componentStorages[type] =
-			std::make_unique<SparseCompStorage<T>>();
-	}
-
-	return static_cast<SparseCompStorage<T>*>(
-		componentStorages[type].get()
-		)->storage;
-}
-
-template<typename T>
 inline SparseCompStorage<T>* Registry::getComponentStorage() {
-	ComponentType type = getComponentType<T>();
-
-	//ensure the storage for this component type exists
-	if (!componentStorages[type])
-	{
-		componentStorages[type] =
-			std::make_unique<SparseCompStorage<T>>();
-	}
-
+	//every storage was created in the constructor, see Registry::initialize()
 	return static_cast<SparseCompStorage<T>*>(
-		componentStorages[type].get()
+		componentStorages[componentType<T>]
 		);
 }
 
@@ -140,7 +115,7 @@ template<typename T>
 inline bool Registry::hasComponent(EntityHandle entity) {
 	assertEntityValid(entity);
 
-	auto& storage = getComponentStorageDirect<T>();
+	auto& storage = getComponentStorage<T>().storage;
 	return storage.isMapped(entity.index);
 }
 

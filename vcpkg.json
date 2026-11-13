@@ -1,5 +1,6 @@
 {
   "dependencies": [
+    "assimp",
     "bgfx",
     "glfw3",
     "glm",
@@ -7,6 +8,7 @@
     "opengl",
     "stb",
     "vulkan",
-    "vulkan-memory-allocator"
+    "vulkan-memory-allocator",
+    "magic-enum"
   ]
 }

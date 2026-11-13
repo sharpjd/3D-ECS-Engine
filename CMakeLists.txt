@@ -4,11 +4,12 @@ project(Minecraft)
 
 option(RELEASE_OPTIMIZATIONS_IN_DEBUG "Use release optimizations in Debug build" OFF)
 
-find_package(bgfx CONFIG REQUIRED)
+#find_package(bgfx CONFIG REQUIRED)
 #find_package(Vulkan REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(glm REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 #add_subdirectory("libs/bgfx.cmake")
 
@@ -40,11 +41,12 @@ target_include_directories(Minecraft PRIVATE
 )
 
 target_link_libraries(Minecraft PRIVATE 
-	bgfx::bgfx
+	#bgfx::bgfx
 #	Vulkan::Vulkan
 	OpenGL::GL
 	glfw
 	glm::glm
+	assimp::assimp
 )
 
 add_custom_command(TARGET Minecraft POST_BUILD

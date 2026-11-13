@@ -113,3 +113,15 @@ struct MultiLightShader : MCShader {
 
     MultiLightShader(ShaderManager& sm) : MCShader(ShaderId::MultiLightDemo, sm) {}
 };
+
+struct DiffuseShader : MCShader {
+    //vert
+    Uniform<glm::mat4> model{ *this, "model" };
+    Uniform<glm::mat4> view{ *this, "view" };
+    Uniform<glm::mat4> projection{ *this, "projection" };
+
+    //frag
+    Uniform<int> glTex_diffuse1{ *this, "texture_diffuse1" };
+
+    DiffuseShader(ShaderManager& sm) : MCShader(ShaderId::Diffuse, sm) {}
+};

@@ -37,6 +37,9 @@ public:
         if (gl_programID != 0) glDeleteProgram(gl_programID);
     }
 
+    /// <summary>
+    /// Simply a shorthand for glUseProgram (on the compiled shader program ID of this shader).
+    /// </summary>
     void use() const { glUseProgram(gl_programID); }
 
     bool isCompiled() const { return compiled; }

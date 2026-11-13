@@ -8,11 +8,11 @@
 class LoadableStringFile {
 private:
 	std::string str;
-	std::string filename;
+	std::string filename_;
 	bool loaded = false;
 public:
 	LoadableStringFile(std::string filename)
-		: filename(filename)
+		: filename_(filename)
 	{
 	}
 
@@ -25,7 +25,7 @@ public:
 
 	void load() {
 		if (loaded) return;
-		str = File::load_file(filename);
+		str = File::load_file(filename_);
 		loaded = true;
 	}
 
@@ -33,6 +33,10 @@ public:
 		loaded = false;
 		str.clear();
 		str.shrink_to_fit();
+	}
+
+	std::string& filename() {
+		return filename_;
 	}
 };
 
@@ -77,6 +81,7 @@ enum class ShaderId {
 	Phong,
 	PhongLightMap,
 	MultiLightDemo,
+	Diffuse,
 };
 
 class VertexShaderLoader : public StringFileLoader<ShaderId> {
@@ -91,6 +96,7 @@ private:
 		{ShaderId::Phong, LoadableStringFile("assets/shaders/phongDemo.vert")},
 		{ShaderId::PhongLightMap, LoadableStringFile("assets/shaders/matLightDemo.vert")},
 		{ShaderId::MultiLightDemo, LoadableStringFile("assets/shaders/multiLightDemo.vert")},
+		{ShaderId::Diffuse, LoadableStringFile("assets/shaders/diffuse.vert")},
 	};
 public:
 	std::unordered_map<ShaderId, LoadableStringFile>& getLoadables() override {
@@ -111,6 +117,7 @@ private:
 		{ShaderId::Phong, LoadableStringFile("assets/shaders/phongDemo.frag")},
 		{ShaderId::PhongLightMap, LoadableStringFile("assets/shaders/matLightDemo.frag")},
 		{ShaderId::MultiLightDemo, LoadableStringFile("assets/shaders/multiLightDemo.frag")},
+		{ShaderId::Diffuse, LoadableStringFile("assets/shaders/diffuse.frag")},
 	};
 public:
 	std::unordered_map<ShaderId, LoadableStringFile>& getLoadables() override {
@@ -190,7 +197,8 @@ enum class TextureId {
 	Jerma,
 	Hank,
 	Container,
-	Container_Specular
+	Container_Specular,
+	Backpack_Diffuse,
 };
 
 class TextureLoader : public TextureFileLoader<TextureId> {
@@ -200,6 +208,7 @@ private:
 		{TextureId::Hank, LoadableTextureFile("assets/images/hank.png")},
 		{TextureId::Container, LoadableTextureFile("assets/images/container.png")},
 		{TextureId::Container_Specular, LoadableTextureFile("assets/images/container_specular.png")},
+		{TextureId::Backpack_Diffuse, LoadableTextureFile("assets/models/backpack/diffuse.jpg")},
 	};
 public:
 	std::unordered_map<TextureId, LoadableTextureFile>& getLoadables() override {
@@ -222,3 +231,36 @@ public:
 	}
 };
 
+
+
+enum ModelID {
+	Backpack,
+};
+
+class ModelLoader : StringFileLoader<ModelID> {
+private:
+	std::unordered_map<ModelID, LoadableStringFile> loadables = {
+		{ModelID::Backpack, LoadableStringFile("assets/models/backpack/backpack.obj")},
+	};
+public:
+	std::unordered_map<ModelID, LoadableStringFile>& getLoadables() override {
+		return loadables;
+	}
+};
+
+
+class ModelManager {
+public:
+
+	ModelLoader& modelLoader;
+
+	void loadAll() {
+		for (auto& [key, value] : modelLoader.getLoadables()) {
+			value.load();
+		}
+	}
+
+	LoadableStringFile& getLoadable(ModelID id) {
+		return modelLoader.getLoadables().at(id);
+	}
+};

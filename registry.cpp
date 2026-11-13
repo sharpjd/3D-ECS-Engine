@@ -4,6 +4,13 @@ Registry::Registry() {
 	initialize();
 }
 
+Registry::~Registry() {
+	//deleting through ISparseCompStorage* is safe: its destructor is virtual
+	for (ISparseCompStorage* storage : componentStorages) {
+		delete storage; //nullptr (never-used component types) is a no-op
+	}
+}
+
 void Registry::initialize() {
 	//this is kind of just OCD...
 	int bytes = sizeof(ComponentType);
@@ -15,6 +22,12 @@ void Registry::initialize() {
 	//we will probably need dynamic/manual max index if we want to use >uint8_t tags
 	//but that day will never come, right?
 	componentStorages.resize(permutations);
+
+	//eagerly create a storage for every component type used in the program, so the
+	//getComponentStorage* accessors never have to check whether one exists
+	for (int type = 0; type < nextComponentType; type++) {
+		componentStorages[type] = storageFactories[type]();
+	}
 }
 
 EntityHandle Registry::newEntity() {
@@ -130,7 +143,7 @@ void Registry::flush() {
 	//flush the dead entity map and dead component map of all storages
 	for (auto& storage : componentStorages) {
 		if (storage == nullptr) continue;
-		storage.get()->resetDeadMap();
+		storage->resetDeadMap();
 	}
 
 	if (deadEntityMap.size() > 0)
@@ -217,7 +230,7 @@ void Registry::removeComponent_internal(EntityHandle handle, ComponentType compo
 	}
 
 	//make sure our storage is big enough to actually index
-	auto* storage = componentStorages[componentType].get();
+	auto* storage = componentStorages[componentType];
 
 	if (storage->sparseSize() <= handle.index) {
 		if (handle.index - storage->sparseSize() > STORAGE_EXPANSION_WARN_SIZE) {
