@@ -21,8 +21,19 @@ public:
 		blockList.resize(BLOCKS_PER_CHUNK * BLOCKS_PER_CHUNK * BLOCKS_PER_CHUNK);
 	}
 
+	int indexOf(int x, int y, int z) {
+		int index = x + z * BPC + y * BPCSQ;
+		assert(index < BPC * BPC * BPC);
+		return index;
+	}
+
 	inline bool at(int i) {
+		assert(i < blockList.size());
 		return blockList[i];
+	}
+
+	inline bool at(int x, int y, int z) {
+		return(at(indexOf(x, y, z)));
 	}
 
 	std::vector<bool>& data() {
@@ -35,13 +46,17 @@ static int globalChunkId = 0;
 
 class Chunk {
 private:
-	int chunkId = -1;
+	int chunkId_ = -1;
 public:
 	std::unordered_map<BlockType, BlockList> blockMaps;
 
 	Chunk()
 	{
-		chunkId = globalChunkId++;
+		chunkId_ = globalChunkId++;
+	}
+
+	int chunkId() {
+		return chunkId_;
 	}
 
 	//if block is not tracked, return what the chunk generator provides

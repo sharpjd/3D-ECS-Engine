@@ -35,7 +35,7 @@ public:
 	bool firstMouse = false;
 	float lastX = 400, lastY = 300;
 
-	float cameraSpeed = 0.01f;
+	float cameraSpeed = 1.0f;
 
 	void update() override {
 
@@ -81,17 +81,17 @@ public:
 
 			if (ec.input.w)
 				//cam.cameraPos += cameraSpeed * cameraFront; //W = direction of mouse, including up/down
-				cam.cameraPos += cameraSpeed * glm::normalize(glm::vec3(direction.x, 0.0f, direction.z));
+				cam.cameraPos += cameraSpeed * glm::normalize(glm::vec3(direction.x, 0.0f, direction.z)) * ec.time.deltaTime;
 			if (ec.input.s)
-				cam.cameraPos -= cameraSpeed * glm::normalize(glm::vec3(direction.x, 0.0f, direction.z));
+				cam.cameraPos -= cameraSpeed * glm::normalize(glm::vec3(direction.x, 0.0f, direction.z)) * ec.time.deltaTime;
 			if (ec.input.a)
-				cam.cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+				cam.cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * ec.time.deltaTime;
 			if (ec.input.d)
-				cam.cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+				cam.cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed * ec.time.deltaTime;
 			if (ec.input.space)
-				cam.cameraPos += cameraSpeed * cameraUp;
+				cam.cameraPos += cameraSpeed * cameraUp * ec.time.deltaTime;
 			if (ec.input.shift)
-				cam.cameraPos -= cameraSpeed * cameraUp;
+				cam.cameraPos -= cameraSpeed * cameraUp * ec.time.deltaTime;
 
 			cam.view = glm::lookAt(cam.cameraPos, cam.cameraPos + cameraFront, cameraUp);
 
@@ -99,11 +99,11 @@ public:
 			//float zoomSensitivity = 10000.0f;
 			//fov -= (float)scrollCallbackYOffset * zoomSensitivity * ec.time.deltaTime;
 
-			float speedChangeSensitivity = 0.01f;
+			float speedChangeSensitivity = 0.5f;
 			cameraSpeed += (float)scrollCallbackYOffset * speedChangeSensitivity;
 
-			if (cameraSpeed < 0.01f) {
-				cameraSpeed = 0.01f;
+			if (cameraSpeed < 1.0f) {
+				cameraSpeed = 1.0f;
 			}
 
 			scrollCallbackYOffset = 0;

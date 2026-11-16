@@ -80,7 +80,7 @@ private:
 	Registry reg;
 	Orchestrator orch;
 
-	World world{3, 5, 3};
+	World world{16, 6, 16};
 
 	EngineContext ec;
 

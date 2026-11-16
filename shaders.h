@@ -125,3 +125,22 @@ struct DiffuseShader : MCShader {
 
     DiffuseShader(ShaderManager& sm) : MCShader(ShaderId::Diffuse, sm) {}
 };
+
+struct BlockShader : MCShader {
+    //vert
+    Uniform<glm::mat4> model{ *this, "model" };
+    Uniform<glm::mat4> transposeInverseModel{ *this, "transposeInverseModel" };
+    Uniform<glm::mat4> view{ *this, "view" };
+    Uniform<glm::mat4> projection{ *this, "projection" };
+
+    Uniform<glm::vec3> chunkWorldPos{ *this, "chunkWorldPos" };
+    UniformArray<int> faceCounts{ *this, "faceCounts", 6 };
+
+    //frag
+    Uniform<glm::vec3> direction{ *this, "globalLight.direction" };
+    Uniform<glm::vec3> ambient{ *this, "globalLight.ambient" };
+    Uniform<glm::vec3> diffuse{ *this, "globalLight.diffuse" };
+    Uniform<glm::vec3> specular{ *this, "globalLight.specular" };
+
+    BlockShader(ShaderManager& sm) : MCShader(ShaderId::Block, sm) {}
+};

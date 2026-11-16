@@ -82,6 +82,7 @@ enum class ShaderId {
 	PhongLightMap,
 	MultiLightDemo,
 	Diffuse,
+	Block,
 };
 
 class VertexShaderLoader : public StringFileLoader<ShaderId> {
@@ -97,6 +98,7 @@ private:
 		{ShaderId::PhongLightMap, LoadableStringFile("assets/shaders/matLightDemo.vert")},
 		{ShaderId::MultiLightDemo, LoadableStringFile("assets/shaders/multiLightDemo.vert")},
 		{ShaderId::Diffuse, LoadableStringFile("assets/shaders/diffuse.vert")},
+		{ShaderId::Block, LoadableStringFile("assets/shaders/block.vert")},
 	};
 public:
 	std::unordered_map<ShaderId, LoadableStringFile>& getLoadables() override {
@@ -118,6 +120,7 @@ private:
 		{ShaderId::PhongLightMap, LoadableStringFile("assets/shaders/matLightDemo.frag")},
 		{ShaderId::MultiLightDemo, LoadableStringFile("assets/shaders/multiLightDemo.frag")},
 		{ShaderId::Diffuse, LoadableStringFile("assets/shaders/diffuse.frag")},
+		{ShaderId::Block, LoadableStringFile("assets/shaders/block.frag")},
 	};
 public:
 	std::unordered_map<ShaderId, LoadableStringFile>& getLoadables() override {
